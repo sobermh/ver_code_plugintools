@@ -6,7 +6,8 @@ import TheWelcome from './components/TheWelcome.vue'
 <template>
   <div class="app">
     <h2>Welcome to Vue 3 + Vite</h2>
-    <router-link to="/home1213">Home</router-link>
+    <router-link to="/">Home</router-link>
+    <router-link to="/about">About</router-link>
     <router-view />
   </div>
 </template>
