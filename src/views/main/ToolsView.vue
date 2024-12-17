@@ -12,9 +12,9 @@
           lg="3"
           xl="2"
         >
-          <v-card variant="elevated" elevation="24" hover @click="dialog_selectfile = true">
+          <v-card variant="elevated" elevation="24" hover @click="selectFile(label)">
             <div class="d-flex flex-no-wrap align-center">
-              <v-avatar rounded="0" size="90">
+              <v-avatar rounded="0" size="80">
                 <v-img
                   :src="
                     tool.thumbnail
@@ -44,10 +44,18 @@
 
       <v-divider class="mb-10"></v-divider>
 
-      <v-file-input v-model="files" label="选择文件" multiple show-size class="ml-2 mr-4" counter>
+      <v-file-input
+        v-model="files"
+        label="选择文件"
+        multiple
+        show-size
+        class="ml-2 mr-4"
+        :accept="selectFileType"
+        counter
+      >
         <template v-slot:selection="{ fileNames }">
           <template v-for="fileName in fileNames" :key="fileName">
-            <v-chip class="me-2" color="primary" size="small" label>
+            <v-chip class="me-2" color="deep-purple-accent-1" size="medium" label>
               {{ fileName }}
             </v-chip>
           </template>
@@ -61,12 +69,13 @@
         <v-btn
           prepend-icon="$loading"
           color="primary"
-          rounded="xl"
+          rounded="lg"
           variant="flat"
           size="x-large"
-          @click="dialog_transfile = files.length > 0 ? true : false"
+          elevation="24"
+          @click="transFile()"
         >
-          <template v-slot:default> 转换为png格式</template>
+          <template v-slot:default>转换</template>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -80,12 +89,17 @@
         <v-btn icon="mdi-close" variant="text" @click="dialog_transfile = false"></v-btn>
       </v-card-title>
 
-      <v-divider class="mb-10"></v-divider>
+      <v-divider class="mb-2"></v-divider>
 
       <v-list lines="two">
-        <v-list-subheader inset color="primary">成功</v-list-subheader>
+        <div class="d-flex justify-space-between mx-4 mb-3">
+          <div>成功</div>
+          <v-btn color="primary" prepend-icon="mdi-arrow-down" variant="flat" size="small">
+            <template v-slot:default>下载全部 (zip)</template>
+          </v-btn>
+        </div>
 
-        <v-list-item v-for="file in files" :key="file" :title="file">
+        <v-list-item v-for="file in files" :key="file" :title="file.name">
           <template v-slot:prepend>
             <v-avatar color="grey-lighten-1">
               <v-icon color="white">mdi-folder</v-icon>
@@ -93,17 +107,25 @@
           </template>
 
           <template v-slot:append>
-            <v-btn color="primary" prepend-icon="mdi-arrow-down" variant="flat" size="small">
+            <v-btn
+              color="primary"
+              prepend-icon="mdi-arrow-down"
+              variant="flat"
+              size="small"
+              @click="downloadFile(file)"
+            >
               <template v-slot:default>下载</template>
             </v-btn>
           </template>
         </v-list-item>
 
-        <v-divider inset></v-divider>
+        <v-divider class="my-4"></v-divider>
 
-        <v-list-subheader inset color="error">失败</v-list-subheader>
+        <div class="d-flex justify-space-between mx-4 mb-3">
+          <div>失败</div>
+        </div>
 
-        <v-list-item v-for="file in files" :key="file" :title="file">
+        <v-list-item v-for="file in failure_files" :key="file" :title="file.name">
           <template v-slot:prepend>
             <v-avatar color="red">
               <v-icon color="white">mdi-calendar</v-icon>
@@ -134,20 +156,27 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import defaultImage from '@/assets/default.png'
-
 import mhRequest from '@/service'
+
 const tools: any = ref([])
-const labels: any = ref([])
+const labels = ref<string[]>([])
 const labels_map: any = {
   other: '其他工具',
   image: '图片处理',
   audio: '音频转换',
   video: '视频转换',
 }
-
-const dialog_selectfile = ref(false)
-const dialog_transfile = ref(false)
+const dialog_selectfile = ref<boolean>(false)
+const selectFileType = ref<string>('*')
+const selectFileType_map: any = {
+  image: 'image/*',
+  audio: 'audio/*',
+  video: 'video/*',
+}
+const dialog_transfile = ref<boolean>(false)
 const files = ref([])
+// const success_files = ref([])
+const failure_files = ref([])
 
 const getTools = () => {
   mhRequest
@@ -172,6 +201,20 @@ const getTools = () => {
     .catch((error) => {
       console.error(error)
     })
+}
+
+const selectFile = (label) => {
+  dialog_selectfile.value = true
+  selectFileType.value = selectFileType_map[label] || '*'
+}
+
+const transFile = () => {
+  dialog_transfile.value = files.value.length > 0 ? true : false
+  console.log(files)
+}
+
+const downloadFile = (file: string) => {
+  console.log(file)
 }
 
 const filterTools = (label: string) => {
