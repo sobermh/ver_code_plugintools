@@ -2,7 +2,7 @@ let BASE_URL = ''
 
 // production
 if (import.meta.env.MODE === 'development') {
-  BASE_URL = 'http://localhost:3001/'
+  BASE_URL = 'https://ai.hezi.com:16150'
 } else {
   BASE_URL = '/api/'
 }

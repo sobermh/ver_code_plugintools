@@ -6,8 +6,9 @@
 
 <script setup lang="ts"></script>
 
-<style scoped>
+<style scoped lang="scss">
 .home {
   color: red;
+  font-size: $text-size-20;
 }
 </style>

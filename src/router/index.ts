@@ -2,17 +2,15 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHashHistory(),
-  // 映射关系：path => component
   routes: [
     {
       path: '/',
-      component: () => import('@/views/main/HomeView.vue'),
-      name: 'Home',
+      redirect: '/tools',
     },
     {
-      path: '/about',
-      component: () => import('@/views/about/AboutView.vue'),
-      name: 'About',
+      path: '/tools',
+      component: () => import('@/views/main/ToolsView.vue'),
+      name: 'tools',
     },
     {
       path: '/:pathMatch(.*)',
@@ -22,5 +20,4 @@ const router = createRouter({
   ],
 })
 
-//导航守卫
 export default router
