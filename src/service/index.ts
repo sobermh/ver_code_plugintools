@@ -1,9 +1,14 @@
-import { BASE_URL, TIMEOUT } from './config'
-import MHRequest from './requests'
+import { AI_BASE_URL, PLUGIN_BASE_URL, TIMEOUT } from './config'
+import { AIRequest } from './requests'
 
-const mhRequest = new MHRequest({
-  baseURL: BASE_URL,
+const aiRequest = new AIRequest({
+  baseURL: AI_BASE_URL,
   timeout: TIMEOUT,
 })
 
-export default mhRequest
+const pluginRequest = new AIRequest({
+  baseURL: PLUGIN_BASE_URL,
+  timeout: TIMEOUT,
+})
+
+export { aiRequest, pluginRequest }
